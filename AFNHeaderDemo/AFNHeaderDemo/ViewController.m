@@ -115,29 +115,27 @@
     UIImage* image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     
     [self uploadImage:image];
+//    [self postDrivingPhotoDatasWithAFN:image];
+//    [self personalUploadHeadImgInterfaceWithImage:image];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)uploadImage:(UIImage *)image{
+    
 
     NSString *urlStr = @"https://testapi.henzfin.com/upload/image";
     
     NSDictionary *body = @{
-                           @"file":image
+                           @"image":image
                            };
     
     // 基于AFN3.0+ 封装的HTPPSession句柄
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer.timeoutInterval = 20;
     
-    
-    
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json",@"text/json",@"text/javascript",@"text/html",@"application/vnd.henzfin.api+json", nil];
-    
-    
     //默认以json的格式发送
-    AFHTTPRequestSerializer *requestSerializer = [AFPropertyListRequestSerializer serializer];
+    AFHTTPRequestSerializer *requestSerializer = [AFHTTPRequestSerializer serializer];
     
     //连接超时设置
     requestSerializer.timeoutInterval = 20;
@@ -153,7 +151,6 @@
     [requestSerializer setValue:@"application/vnd.henzfin.api+json;version=1.0" forHTTPHeaderField:@"Accept"];
     
     manager.requestSerializer = requestSerializer;
-
 
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"multipart/form-data", @"application/json", @"text/html", @"image/jpeg", @"image/png", @"application/octet-stream", @"text/json", nil];
     // 在parameters里存放照片以外的对象
@@ -201,6 +198,88 @@
         
     }];
 
+}
+
+
+- (void)postDrivingPhotoDatasWithAFN:(UIImage *) image{
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.2);
+    
+    NSString *url = @"https://testapi.henzfin.com/upload/image";
+    
+    NSString *base64DataString = [imageData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    
+    NSDictionary *myDic = @{
+                            @"file":base64DataString
+                            };
+    
+    NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:url parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+//        NSLog(@"formData = %@",formData);
+        
+        
+    } error:nil];
+    
+    NSString *DefaultToken = @"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTg5NDE0YmEtOGFiNy00NGZhLWJjOWEtZDc0Nzk0MDdhODJiIiwidXNlcm5hbWUiOiIxMzA1NTI3OTI0MCIsImV4cCI6MTUxNTc2NDk4MiwiZW1haWwiOiIiLCJvcmlnX2lhdCI6MTUxMTkzODk3Nn0.HSIvu_flVW-4tZ4UhT9E32EYYyW5GLMvrncjzleWT0U";
+    
+    if (DefaultToken){
+        NSString *setToken = [@"JWT " stringByAppendingString:DefaultToken];
+        
+        [request addValue:setToken forHTTPHeaderField:@"Authorization"];
+    }
+    
+    //请求头还需要附加这个 Accept
+    
+//   [request addValue: @"application/vnd.henzfin.api+json;version=1.0" forHTTPHeaderField:@"Accept"];
+    
+    //根据API的要求，定义相对应的Content-Type application/x-www-form-urlencoded && multipart/form-data
+    
+    
+//        [request addValue: @"application/x-www-form-urlencoded" forHTTPHeaderField: @"Content-Type"];
+    [request addValue: @"multipart/form-data; boundary=--------------------------423249244386913660705823" forHTTPHeaderField: @"Content-Type"];
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:myDic
+                                                   options:NSJSONWritingPrettyPrinted
+                                                     error:nil];
+    
+    
+    request.HTTPMethod  =  @"POST";
+    
+    [request setHTTPBody: data];
+    
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    
+    
+    //设置服务器返回内容的接受格式
+    AFHTTPResponseSerializer *responseSer = [AFHTTPResponseSerializer serializer];
+    responseSer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"multipart/form-data", @"application/json", @"text/html", @"image/jpeg", @"image/png", @"application/octet-stream", @"text/json",@"application/x-www-form-urlencoded", nil];
+    manager.responseSerializer = responseSer;
+    
+    NSURLSessionUploadTask *uploadTask = [manager uploadTaskWithStreamedRequest:request progress:nil completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        
+        if (error) {
+     
+            NSString *ErrorString =[[NSString alloc]initWithData:error.userInfo[@"com.alamofire.serialization.response.error.data"] encoding:NSUTF8StringEncoding];
+            
+            //AFN3.0 获取 - statusCode
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            
+            NSInteger statusCode = response.statusCode;
+            
+            NSLog(@"post - Http请求错误原因 - %@ , statusCode = %ld", ErrorString, (long)statusCode);
+            
+            
+        } else {
+
+            
+            NSLog(@"success - !!");
+//            [self handleDrivingPhotoInfo:responseObject];
+            
+        }
+    }];
+    
+    [uploadTask resume];
+    
+    
 }
 
 
