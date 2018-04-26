@@ -34,10 +34,21 @@ DemoCellDelegate
     [self loadDatas];
 }
 
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
+    DemoModel *model = _datas[0][0];
+    NSLog(@"miss -content = %@",model.textFieldValue);
+    
+}
 
 - (void)baseSetting{
     self.view.backgroundColor = [UIColor lightGrayColor];
     self.title = @"demoVC";
+}
+
+- (void)retunBlock:(carAddDeviceSuccess)block{
+    _block = block;
 }
 
 #pragma mark - setupUI
@@ -67,12 +78,19 @@ DemoCellDelegate
     
     if (_deviceDatas.count) {
         
-        _datas = _deviceDatas;
+        //同地址
+        //_datas = _deviceDatas.copy;
+        
+        //不同地址 - 但是还是change了
+        NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:
+                                      [NSKeyedArchiver archivedDataWithRootObject:_deviceDatas]];
+        _datas = [NSArray arrayWithArray:trueDeepCopyArray];
+        
     }
     else{
         //initDatas
         NSMutableArray *arrayM = [NSMutableArray array];
-        for (int i = 0 ; i < 5; i ++) {
+        for (int i = 0 ; i < 1; i ++) {
             DemoModel *model = [[DemoModel alloc]init];
             [arrayM addObject:model];
         }
@@ -87,8 +105,10 @@ DemoCellDelegate
     
     [self.view endEditing:YES];
     if (_block) {
+        NSArray *array = [NSArray arrayWithArray:_datas];
         
-        _block(_datas);
+        _block(array);
+        
         [self.navigationController popViewControllerAnimated:YES];
     }
 }

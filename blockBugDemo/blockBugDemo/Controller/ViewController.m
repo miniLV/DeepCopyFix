@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "NextViewController.h"
-
+#import "DemoModel.h"
 
 @interface ViewController ()
 
@@ -46,16 +46,39 @@
     if (!self.pushDeviceDatas) {
         self.pushDeviceDatas = [NSArray array];
     }
-    __weak typeof(self) weakSelf = self;
-    vc.block = ^(NSArray *basicDatas) {
-        
-        weakSelf.pushDeviceDatas = [[NSArray alloc]initWithArray:basicDatas copyItems:YES];
-        
-    };
+//    __weak typeof(self) weakSelf = self;
     
-    vc.deviceDatas = [[NSArray alloc]initWithArray:self.pushDeviceDatas copyItems:YES];
+//    vc.block = ^(NSArray *basicDatas) {
+//
+//        weakSelf.pushDeviceDatas = [[NSArray alloc]initWithArray:basicDatas copyItems:YES];
+//
+//        NSLog(@"fucking block");
+//    };
+
+    
+    if (self.pushDeviceDatas.count) {
+        DemoModel *model = self.pushDeviceDatas[0][0];
+        NSLog(@"content = %@",model.textFieldValue);
+        
+    }
+    
+    NSArray *test = [[NSArray alloc]initWithArray:self.pushDeviceDatas copyItems:YES];
+    
+    vc.deviceDatas = test;
+
+    
     
     [self.navigationController pushViewController:vc animated:YES];
+    
+    [vc setBlock:^(NSArray *basicDatas) {
+        
+        NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:
+                                      [NSKeyedArchiver archivedDataWithRootObject:basicDatas]];
+        
+        self.pushDeviceDatas = trueDeepCopyArray;
+        
+        NSLog(@"fucking block");
+    }];
 }
 
 

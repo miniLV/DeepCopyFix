@@ -17,4 +17,6 @@ typedef void(^carAddDeviceSuccess)(NSArray *basicDatas);
 //历史的设备信息列表 - 传进来修改
 @property (nonatomic, copy)NSArray *deviceDatas;
 
+- (void)retunBlock:(carAddDeviceSuccess)block;
+
 @end
