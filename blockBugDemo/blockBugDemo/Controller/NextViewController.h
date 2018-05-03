@@ -8,15 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^carAddDeviceSuccess)(NSArray *basicDatas);
+typedef void(^MNSuccessBlock)(NSArray *basicDatas);
 
 @interface NextViewController : UIViewController
 
-@property (nonatomic, copy)carAddDeviceSuccess block;
+@property (nonatomic, copy)MNSuccessBlock block;
 
-//历史的设备信息列表 - 传进来修改
-@property (nonatomic, copy)NSArray *deviceDatas;
+//ViewController传进来的数据 - 要在demoVC展示
+@property (nonatomic, copy)NSArray *rootVcDatas;
 
-- (void)retunBlock:(carAddDeviceSuccess)block;
+- (void)retunBlock:(MNSuccessBlock)block;
 
 @end

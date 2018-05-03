@@ -12,7 +12,7 @@
 
 @interface ViewController ()
 
-@property (nonatomic, copy)NSArray *pushDeviceDatas;
+@property (nonatomic, copy)NSArray *pushNextDatas;
 
 @end
 
@@ -43,43 +43,13 @@
 - (void)p_clickBtn{
     
     NextViewController *vc = [[NextViewController alloc]init];
-    if (!self.pushDeviceDatas) {
-        self.pushDeviceDatas = [NSArray array];
-    }
-//    __weak typeof(self) weakSelf = self;
-    
-//    vc.block = ^(NSArray *basicDatas) {
-//
-//        weakSelf.pushDeviceDatas = [[NSArray alloc]initWithArray:basicDatas copyItems:YES];
-//
-//        NSLog(@"fucking block");
-//    };
-
-    
-    if (self.pushDeviceDatas.count) {
-        DemoModel *model = self.pushDeviceDatas[0][0];
-        NSLog(@"content = %@",model.textFieldValue);
-        
-    }
-    
-    NSArray *test = [[NSArray alloc]initWithArray:self.pushDeviceDatas copyItems:YES];
-    
-    vc.deviceDatas = test;
-
-    
-    
+    vc.rootVcDatas = self.pushNextDatas;
     [self.navigationController pushViewController:vc animated:YES];
     
     [vc setBlock:^(NSArray *basicDatas) {
         
-        NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:
-                                      [NSKeyedArchiver archivedDataWithRootObject:basicDatas]];
-        
-        self.pushDeviceDatas = trueDeepCopyArray;
-        
-        NSLog(@"fucking block");
+        self.pushNextDatas = basicDatas;
     }];
 }
-
 
 @end

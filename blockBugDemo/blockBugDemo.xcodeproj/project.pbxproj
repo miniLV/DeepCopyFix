@@ -67,6 +67,7 @@
 		A7656D6620920E3E0036FA7A /* blockBugDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A7D73E2F209B452200BD0DC3 /* Model */,
 				A7656D812092112C0036FA7A /* View */,
 				A7656D7D20920EC40036FA7A /* Controller */,
 				A7656D6720920E3E0036FA7A /* AppDelegate.h */,
@@ -94,12 +95,19 @@
 		A7656D812092112C0036FA7A /* View */ = {
 			isa = PBXGroup;
 			children = (
-				A7656D852092125E0036FA7A /* DemoModel.h */,
-				A7656D862092125E0036FA7A /* DemoModel.m */,
 				A7656D82209211430036FA7A /* DemoCell.h */,
 				A7656D83209211430036FA7A /* DemoCell.m */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		A7D73E2F209B452200BD0DC3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A7656D852092125E0036FA7A /* DemoModel.h */,
+				A7656D862092125E0036FA7A /* DemoModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

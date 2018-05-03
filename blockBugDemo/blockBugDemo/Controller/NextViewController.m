@@ -34,20 +34,12 @@ DemoCellDelegate
     [self loadDatas];
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    
-    DemoModel *model = _datas[0][0];
-    NSLog(@"miss -content = %@",model.textFieldValue);
-    
-}
-
 - (void)baseSetting{
     self.view.backgroundColor = [UIColor lightGrayColor];
     self.title = @"demoVC";
 }
 
-- (void)retunBlock:(carAddDeviceSuccess)block{
+- (void)retunBlock:(MNSuccessBlock)block{
     _block = block;
 }
 
@@ -56,8 +48,8 @@ DemoCellDelegate
     
     CGFloat naviH = 64;
     CGFloat tabBarH = 49;
-    CGFloat viewH = 667;
-    CGFloat viewW = 375;
+    CGFloat viewH = CGRectGetHeight(self.view.frame);
+    CGFloat viewW = CGRectGetWidth(self.view.frame);
     
     //tableView
     UITableView *tableView = [[UITableView alloc]init];
@@ -69,28 +61,26 @@ DemoCellDelegate
     UIButton *btn = [[UIButton alloc]init];
     btn.frame = CGRectMake(0, viewH - tabBarH, viewW, tabBarH);
     [self.view addSubview:btn];
-    btn.backgroundColor = [UIColor orangeColor];
+    [btn setTitle:@"click-pop" forState:UIControlStateNormal];
+    btn.backgroundColor = [UIColor lightGrayColor];
     [btn addTarget:self action:@selector(p_clickBottomBtn) forControlEvents:UIControlEventTouchUpInside];
 }
 
 #pragma mark - lodaDatas
 - (void)loadDatas{
     
-    if (_deviceDatas.count) {
+    //如果外部传进来数据，就显示传进来的
+    if (_rootVcDatas.count) {
         
-        //同地址
-        //_datas = _deviceDatas.copy;
-        
-        //不同地址 - 但是还是change了
         NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:
-                                      [NSKeyedArchiver archivedDataWithRootObject:_deviceDatas]];
+                                      [NSKeyedArchiver archivedDataWithRootObject:_rootVcDatas]];
         _datas = [NSArray arrayWithArray:trueDeepCopyArray];
         
     }
     else{
         //initDatas
         NSMutableArray *arrayM = [NSMutableArray array];
-        for (int i = 0 ; i < 1; i ++) {
+        for (int i = 0 ; i < 3; i ++) {
             DemoModel *model = [[DemoModel alloc]init];
             [arrayM addObject:model];
         }
@@ -105,10 +95,8 @@ DemoCellDelegate
     
     [self.view endEditing:YES];
     if (_block) {
-        NSArray *array = [NSArray arrayWithArray:_datas];
         
-        _block(array);
-        
+        _block(_datas);
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -118,15 +106,12 @@ DemoCellDelegate
 }
 
 #pragma mark - privateDelegate
-- (void)mn_endEditTextField:(UITextField *)sender{
+- (void)endEditTextField:(UITextField *)sender{
     
     NSInteger section = sender.tag / 100;
     NSInteger row = sender.tag % 100;
     DemoModel *model = _datas[section][row];
     model.textFieldValue = sender.text;
-////    kRefreshTableView(_tableView, row, section);
-//    _tableView reloadRowsAtIndexPaths:@[[NSIndexPath]] withRowAnimation:<#(UITableViewRowAnimation)#>
-//
 }
 
 #pragma mark - <UITableViewDelegate>
@@ -144,7 +129,7 @@ DemoCellDelegate
     DemoCell *cell = [DemoCell createCellWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellID" WithTableView:tableView];
     cell.indexPath = indexPath;
     cell.model = model;
-    cell.mnDelegate = self;
+    cell.delegate = self;
     return cell;
 }
 

@@ -10,7 +10,7 @@
 @class DemoModel;
 @protocol DemoCellDelegate <NSObject>
 
-- (void)mn_endEditTextField:(UITextField *_Nullable)sender;
+- (void)endEditTextField:(UITextField *_Nullable)sender;
 
 @end
 
@@ -24,6 +24,6 @@
 
 @property (nonatomic, strong)NSIndexPath *indexPath;
 
-@property (nonatomic, weak) id <DemoCellDelegate> mnDelegate;
+@property (nonatomic, weak) id <DemoCellDelegate> delegate;
 
 @end

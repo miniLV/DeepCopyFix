@@ -51,7 +51,7 @@
 - (void)p_createControls{
     UITextField *textField = [[UITextField alloc]init];
     [self.contentView addSubview:textField];
-    textField.frame = CGRectMake(0, 0, 150, 40);
+    textField.frame = CGRectMake(0, 0, 250, 40);
     textField.backgroundColor = [UIColor orangeColor];
     textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [textField addTarget:self action:@selector(p_endEditTextField:) forControlEvents:UIControlEventEditingDidEnd];
@@ -60,8 +60,8 @@
 
 - (void)p_endEditTextField:(UITextField *)sender{
     
-    [_mnDelegate respondsToSelector:@selector(mn_endEditTextField:)] ?
-    [_mnDelegate mn_endEditTextField:sender] : nil;
+    [_delegate respondsToSelector:@selector(endEditTextField:)] ?
+    [_delegate endEditTextField:sender] : nil;
 }
 
 @end
