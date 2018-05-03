@@ -17,6 +17,6 @@ typedef void(^MNSuccessBlock)(NSArray *basicDatas);
 //ViewController传进来的数据 - 要在demoVC展示
 @property (nonatomic, copy)NSArray *rootVcDatas;
 
-- (void)retunBlock:(MNSuccessBlock)block;
+- (void)callBackBlock:(MNSuccessBlock)block;
 
 @end

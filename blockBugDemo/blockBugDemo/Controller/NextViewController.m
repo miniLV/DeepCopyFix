@@ -39,7 +39,7 @@ DemoCellDelegate
     self.title = @"demoVC";
 }
 
-- (void)retunBlock:(MNSuccessBlock)block{
+- (void)callBackBlock:(MNSuccessBlock)block{
     _block = block;
 }
 
